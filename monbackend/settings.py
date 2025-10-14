@@ -123,17 +123,27 @@ REST_FRAMEWORK = {
 #         }
 #     }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'aufsarl1_produit',
+#         'USER': 'aufsarl1_benesrf',
+#         'PASSWORD': 'BenesRf@2025',
+#         'HOST': 'hala.gasyweb.com', 
+#         'PORT': '3306',        
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'aufsarl1_produit',
         'USER': 'aufsarl1_benesrf',
         'PASSWORD': 'BenesRf@2025',
-        'HOST': 'localhost', 
-        'PORT': '3306',        
+        'HOST': 'hala.gasyweb.com',
+        'PORT': '3306',
     }
 }
-
 
 
 # Password validation
