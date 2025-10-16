@@ -9,8 +9,8 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-import pymysql
-pymysql.install_as_MySQLdb()
+# import pymysql
+# pymysql.install_as_MySQLdb()
 
 from pathlib import Path
 import os
@@ -101,12 +101,12 @@ REST_FRAMEWORK = {
 # if DB_LIVE in ["False", False]:
 #     DATABASES = {
 #         'default': {
-#             'ENGINE': 'django.db.backends.postgresql',
-#             'NAME': 'test',
-#             'USER': 'postgres',
-#             'PASSWORD': '1234',
-#             'HOST': 'localhost',
-#             'PORT': '5432',
+            # 'ENGINE': 'django.db.backends.postgresql',
+            # 'NAME': 'test',
+            # 'USER': 'postgres',
+            # 'PASSWORD': '1234',
+            # 'HOST': 'localhost',
+            # 'PORT': '5432',
 #         }
 #     }
 
@@ -136,12 +136,12 @@ REST_FRAMEWORK = {
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'aufsarl1_produit',
-        'USER': 'aufsarl1_benesrf',
-        'PASSWORD': 'BenesRf@2025',
-        'HOST': 'hala.gasyweb.com',
-        'PORT': '3306',
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'auf-sarl',
+            'USER': 'postgres',
+            'PASSWORD': '1234',
+            'HOST': 'localhost',
+            'PORT': '5432',
     }
 }
 
