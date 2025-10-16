@@ -61,4 +61,4 @@ RUN chmod +x wait-for-db.sh
 
 # --- Étape 7 : Commande de démarrage ---
 # ⚠️ Remplace "ventesproduit" par le dossier où se trouve ton settings.py et wsgi.py
-CMD ["./wait-for-db.sh", "gunicorn", "ventesproduit.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["./wait-for-db.sh", "gunicorn", "monbackend.wsgi:application", "--bind", "0.0.0.0:8000"]
