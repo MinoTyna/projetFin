@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-gybr)@9q7a&l&k$d6%xtwu51v3m5q%95hja(#%v2yno^t2d5=a'
+# SECRET_KEY = 'django-insecure-gybr)@9q7a&l&k$d6%xtwu51v3m5q%95hja(#%v2yno^t2d5=a'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
@@ -134,15 +134,31 @@ REST_FRAMEWORK = {
 #     }
 # }
 
+# DATABASES = {
+#     'default': {
+#             'ENGINE': 'django.db.backends.postgresql',
+#             'NAME': 'auf-sarl',
+#             'USER': 'postgres',
+#             'PASSWORD': '1234',
+#             'HOST': 'db',
+#             'PORT': '5432',
+#     }
+# }
+import dj_database_url
+
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    'django-insecure-gybr)@9q7a&l&k$d6%xtwu51v3m5q%95hja(#%v2yno^t2d5=a'  # clé locale par défaut
+)
+
+# Mode production
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+
+# Configuration PostgreSQL depuis Render
 DATABASES = {
-    'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'auf-sarl',
-            'USER': 'postgres',
-            'PASSWORD': '1234',
-            'HOST': 'db',
-            'PORT': '5432',
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL')
+    )
 }
 
 
@@ -209,7 +225,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://myapp.auf-sarlu.mg",# frontend
     "http://localhost:3000",       # dev local si besoin
 ]
-DEBUG = False  # ⚠️ Mettre True uniquement en dev, False en prod
+# DEBUG = False  # ⚠️ Mettre True uniquement en dev, False en prod
 
 # ----- HOSTS -----
 ALLOWED_HOSTS = [
