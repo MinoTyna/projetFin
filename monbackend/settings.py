@@ -156,10 +156,17 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # Configuration PostgreSQL depuis Render
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL')
+    'default': dj_database_url.parse(
+        os.environ.get(
+            'DATABASE_URL',
+            'postgresql://postgre:5kr7i1RC8OFbbsX3fzqptTAE3gP91USM@dpg-d3o83ud6ubrc73a85cj0-a.oregon-postgres.render.com/aufsarl'
+        ),
+        conn_max_age=600,
+        ssl_require=True
     )
 }
+DEBUG = False  # ⚠️ Mettre True uniquement en dev, False en prod
+
 
 
 # Password validation
@@ -225,7 +232,6 @@ CORS_ALLOWED_ORIGINS = [
     "https://myapp.auf-sarlu.mg",# frontend
     "http://localhost:3000",       # dev local si besoin
 ]
-# DEBUG = False  # ⚠️ Mettre True uniquement en dev, False en prod
 
 # ----- HOSTS -----
 ALLOWED_HOSTS = [
