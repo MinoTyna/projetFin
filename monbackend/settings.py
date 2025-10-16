@@ -242,4 +242,5 @@ ALLOWED_HOSTS = [
     "myapp.auf-sarlu.mg",
     "myvente.auf-sarlu.mg",
     "localhost",
+    "projetfin.onrender.com"
 ]
