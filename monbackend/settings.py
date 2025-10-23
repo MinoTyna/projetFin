@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 # import pymysql
 # pymysql.install_as_MySQLdb()
+SITE_URL = "http://127.0.0.1:8000"
+MVOLA_SANDBOX_TOKEN = "eyJ4NXQiOiJaREUzWW1RNFkyRmtZekprTmpNMk5EVmtZVE5oTkRSak16azFObVEyWXprelkyUTFaVFZqWVEiLCJraWQiOiJNVGRsTXpneFpqZGtNakk0WmpKbVlUZ3dNRFJpWWpNMU1tUmhOamxoTUdNME1XTmtPV05tT1RobU16VXlNMlUxTkRZNE5UWXhOMk01TW1SbU5XUTRPQV9SUzI1NiIsInR5cCI6ImF0K2p3dCIsImFsZyI6IlJTMjU2In0"
 
 from pathlib import Path
 import os
@@ -140,7 +142,7 @@ REST_FRAMEWORK = {
 #             'NAME': 'auf-sarl',
 #             'USER': 'postgres',
 #             'PASSWORD': '1234',
-#             'HOST': 'db',
+#             'HOST': 'localhost',
 #             'PORT': '5432',
 #     }
 # }
@@ -238,9 +240,12 @@ ALLOWED_HOSTS = [
     "api.auf-sarlu.mg",
     "app.auf-sarlu.mg",
     "venteproduit.auf-sarlu.mg",
+    "lu.auf-sarlu.mg",
     "vente.auf-sarlu.mg",
     "myapp.auf-sarlu.mg",
     "myvente.auf-sarlu.mg",
     "localhost",
     "projetfin.onrender.com"
 ]
+# ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+

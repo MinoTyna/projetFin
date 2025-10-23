@@ -16,7 +16,7 @@
 # ]
 from django.urls import path
 from .views import PaiementCreateView, PaiementListView, VerifierPaiementListView, PaiementDeleteAPIView, ListeResteAPayerParClient,ListePayerParClients,ListePayerParClient,PaiementUpdateView,SmsVerifierByClientView,RepaiementCreateView,PaiementView,ChiffreAffairesAPIView
-
+from . import views
 urlpatterns = [
     path('post', PaiementCreateView.as_view(), name='enregistrer-paiement'),
     path('repaiement', RepaiementCreateView.as_view(), name='enregistrer-paiement'),
@@ -30,6 +30,9 @@ urlpatterns = [
     path('get/client', ListeResteAPayerParClient.as_view(), name='delete-paiement'),
     path('get/<int:client_id>/<str:date_achat>', ListePayerParClients.as_view(), name='delete-paiement'),
     path('get/<int:client_id>', ListePayerParClient.as_view(), name='liste-payer-client'),
+    path("lancer/", views.lancer_paiement, name="lancer_paiement"),
+    path("callback/", views.paiement_callback, name="paiement_callback"),
+
 
 
 ]
