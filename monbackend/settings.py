@@ -284,7 +284,7 @@ SECRET_KEY = os.environ.get(
 )
 
 # ----- DEBUG -----
-DEBUG = os.environ.get("DEBUG", "False") == "True"
+DEBUG = False
 
 # ----- ALLOWED HOSTS -----
 ALLOWED_HOSTS = [
