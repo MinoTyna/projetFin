@@ -11,6 +11,7 @@ class ResponsableNestedSerializer(serializers.ModelSerializer):
 # ✅ Ensuite, utilise-le dans le serializer du produit
 class ProduitSerializer(serializers.ModelSerializer):
     responsable = ResponsableNestedSerializer(read_only=True)
+    Produit_photo = serializers.ImageField(use_url=True)  # ⚡ renvoie l'URL complète
 
     class Meta:
         model = Produit

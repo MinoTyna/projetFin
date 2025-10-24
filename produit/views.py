@@ -23,14 +23,29 @@ class ProduitTotalAPIView(APIView):
 
 
 # ðŸ”¹ POST : CrÃ©er un nouveau Produit
+# class ProduitCreateAPIView(APIView):
+#     def post(self, request):
+#         serializer = ProduitSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import ProduitSerializer
+
 class ProduitCreateAPIView(APIView):
+    parser_classes = [MultiPartParser, FormParser]  # ⚡ important pour les fichiers
+
     def post(self, request):
         serializer = ProduitSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class ProduitDeleteAPIView(APIView):
     def delete(self, request, produit_id):
