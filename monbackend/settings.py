@@ -256,9 +256,10 @@ ALLOWED_HOSTS = [
 
 
 cloudinary.config(
-    cloud_name=os.environ.get("CLOUDINARY_NAME"),
-    api_key=os.environ.get("CLOUDINARY_KEY"),
-    api_secret=os.environ.get("CLOUDINARY_SECRET"),
+    cloud_name="dywaprcfa",
+    api_key="342866519857239",
+    api_secret="wC3unuMlOKDvDkq3JZLDooMW8GE",
+    secure=True  # facultatif, mais recommandé pour HTTPS
 )
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
