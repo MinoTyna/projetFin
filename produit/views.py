@@ -38,14 +38,15 @@ from rest_framework import status
 from .serializers import ProduitSerializer
 
 class ProduitCreateAPIView(APIView):
-    parser_classes = [MultiPartParser, FormParser]  # ⚡ important pour les fichiers
+    parser_classes = [MultiPartParser, FormParser]
 
     def post(self, request):
-        serializer = ProduitSerializer(data=request.data)
+        serializer = ProduitSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class ProduitDeleteAPIView(APIView):
     def delete(self, request, produit_id):

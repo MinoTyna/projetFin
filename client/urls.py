@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import ClientCreateAPIView,ClientListAPIView,ClientDeleteAPIView,ClientUpdateAPIView,ClientDetailAPIView,GeocodeAPIView,ClientTotalAPIView,ConnexionClientAPIView
+from .views import UploadImageView
 
 urlpatterns = [
     path('post', ClientCreateAPIView.as_view(), name='enregistrer-client'),
@@ -10,6 +11,9 @@ urlpatterns = [
     path('update/<int:pk>', ClientUpdateAPIView.as_view(), name='update-client'),
     path('api/geocode/', GeocodeAPIView.as_view(), name='geocode'),
     path('connexion', ConnexionClientAPIView.as_view(), name='sync_utilisateur'),
+    path("upload-image/", UploadImageView.as_view()),
+
 
 
 ]
+

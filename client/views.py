@@ -47,23 +47,44 @@ from django.contrib.auth.hashers import make_password
 from .models import Client
 from .serializers import ClientSerializer
 
+from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Client
+from .serializers import ClientSerializer
+from django.contrib.auth.hashers import make_password
+from rest_framework_simplejwt.tokens import RefreshToken
+
+from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth.hashers import make_password
+from .serializers import ClientSerializer
+from .models import Client
+from rest_framework_simplejwt.tokens import RefreshToken
+
 class ClientCreateAPIView(APIView):
+    parser_classes = [MultiPartParser, FormParser]
+
     def post(self, request):
         cin = request.data.get('Client_cin')
         if Client.objects.filter(Client_cin=cin).exists():
-            return Response({"error": "Le client avec ce CIN existe déjà."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Le client avec ce CIN existe déjà."},
+                            status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = ClientSerializer(data=request.data)
+        serializer = ClientSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             client = serializer.save()
 
-            # Hasher le mot de passe avant sauvegarde
+            # Hasher le mot de passe
             raw_password = request.data.get("password")
             if raw_password:
                 client.password = make_password(raw_password)
                 client.save()
 
-            # Générer le token
+            # Générer le token JWT
             refresh = RefreshToken.for_user(client)
             token = str(refresh.access_token)
 
@@ -74,10 +95,13 @@ class ClientCreateAPIView(APIView):
                     "Client_role": client.Client_role,
                     "Client_nom": client.Client_nom,
                     "Client_prenom": client.Client_prenom,
+                    "Client_photo": client.Client_photo.url if client.Client_photo else None,
+                    "Client_photo_url": f"https://rcbhcqyypiaatvcyolnw.supabase.co/storage/v1/object/public/media/{client.Client_photo.name.split('/')[-1]}" if client.Client_photo else None
                 }
             }, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            print(serializer.errors)  # pour debug si besoin
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         
 # ðŸ”¹ DELETE : Supprimer un client par son id
@@ -251,3 +275,36 @@ class ConnexionClientAPIView(APIView):
             return Response({"error": "Client non trouvé"}, status=400)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from core.supabase_client import supabase, BUCKET
+import time
+
+class UploadImageView(APIView):
+    def post(self, request):
+        uploaded_file = request.FILES.get("image")
+        if not uploaded_file:
+            return Response({"error": "Aucun fichier reçu"}, status=400)
+
+        filename = f"{int(time.time())}_{uploaded_file.name}"
+
+        # Upload du fichier (bytes + content type)
+        result = supabase.storage.from_(BUCKET).upload(
+            filename,
+            uploaded_file.read(),
+            {"content-type": uploaded_file.content_type}
+        )
+
+        # Vérifier si une erreur s'est produite
+        if result.error:
+            return Response({"error": str(result.error)}, status=400)
+
+        # URL publique
+        public_url = supabase.storage.from_(BUCKET).get_public_url(filename)
+
+        return Response({
+            "message": "Image envoyée dans Supabase Storage",
+            "url": public_url
+        }, status=201)

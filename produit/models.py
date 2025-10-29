@@ -16,7 +16,11 @@ class Produit(models.Model):
     Produit_description = models.TextField(blank=True, null=True)
     Produit_reference = models.TextField(blank=True, null=True)
     Produit_prix = models.IntegerField()
+    
+    # ⚡ Supabase Storage → stocker le nom du fichier
     Produit_photo = models.ImageField(upload_to='produits/photos/', blank=True, null=True)
+
+    
     date = models.DateTimeField(auto_now_add=True)
 
     Produit_quantite = models.PositiveIntegerField(
@@ -34,3 +38,8 @@ class Produit(models.Model):
     def __str__(self):
         return f"{self.Produit_nom} ({self.Produit_categorie})"
 
+    # ⚡ Générer l'URL publique de Supabase
+    def get_photo_url(self):
+        if self.Produit_photo:
+            return f"https://rcbhcqyypiaatvcyolnw.supabase.co/storage/v1/object/public/media/{self.Produit_photo}"
+        return None

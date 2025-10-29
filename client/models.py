@@ -21,3 +21,8 @@ class Client(models.Model):
 
     def __str__(self):
         return f"{self.Client_prenom} {self.Client_nom}"
+    # ⚡ Générer l'URL publique de Supabase
+    def get_photo_url(self):
+        if self.Produit_photo:
+            return f"https://rcbhcqyypiaatvcyolnw.supabase.co/storage/v1/object/public/media/{self.Client_photo}"
+        return None
