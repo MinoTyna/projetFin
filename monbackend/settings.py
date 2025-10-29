@@ -237,16 +237,16 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 # ----- HOSTS -----
-# ALLOWED_HOSTS = [
-#     "api.auf-sarlu.mg",
-#     "app.auf-sarlu.mg",
-#     "venteproduit.auf-sarlu.mg",
-#     "lu.auf-sarlu.mg",
-#     "vente.auf-sarlu.mg",
-#     "myapp.auf-sarlu.mg",
-#     "myvente.auf-sarlu.mg",
-#     "localhost",
-#     "projetfin.onrender.com"
-# ]
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = [
+    "api.auf-sarlu.mg",
+    "app.auf-sarlu.mg",
+    "venteproduit.auf-sarlu.mg",
+    "lu.auf-sarlu.mg",
+    "vente.auf-sarlu.mg",
+    "myapp.auf-sarlu.mg",
+    "myvente.auf-sarlu.mg",
+    "localhost",
+    "projetfin.onrender.com"
+]
+# ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
