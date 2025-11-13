@@ -67,11 +67,9 @@ class EnregistrerAchatAPIView(APIView):
                 montant_achat = Decimal(produit.Produit_prix) * Decimal(quantite_achat)
                 montant_total_global += montant_achat
 
-                # Vérifier si le client a déjà acheté ce produit
                 achat_existant = Achat.objects.filter(ClientID_id=client_id, ProduitID_id=produit_id).first()
 
                 if achat_existant:
-                    # Cumuler la quantité et le montant
                     achat_existant.Achat_quantite += quantite_achat
                     achat_existant.Achat_montant += montant_achat
                     achat_existant.save()
@@ -113,13 +111,18 @@ class EnregistrerAchatAPIView(APIView):
             if not achats_enregistres:
                 return Response({"error": "Aucun achat valide enregistré"}, status=400)
 
+            # ✅ Crée la liste des IDs
+            achat_ids = [achat.id for achat in achats_enregistres]
+
             # Regrouper tous les achats en un seul panier
             panier = {
                 "client_id": achats_enregistres[0].ClientID.id,
-                "client": achats_enregistres[0].ClientID.Client_nom,  # adapte selon ton modèle
+                "client": achats_enregistres[0].ClientID.Client_nom,
                 "responsable": achats_enregistres[0].ResponsableID.Responsable_email,
+                "achat_ids": achat_ids,  # <-- ajout des IDs
                 "achats": [
                     {
+                        "id": achat.id,  # <-- ID pour chaque achat
                         "produit": achat.ProduitID.Produit_nom,
                         "quantite": achat.Achat_quantite,
                         "prix_total": achat.Achat_montant,
@@ -132,7 +135,6 @@ class EnregistrerAchatAPIView(APIView):
             return Response(panier, status=201)
 
         except Exception as e:
-            # Retourner l'erreur complète pour debug
             return Response({
                 "error": str(e),
                 "trace": format_exc()

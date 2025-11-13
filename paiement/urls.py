@@ -32,7 +32,7 @@ urlpatterns = [
     path('get/<int:client_id>', ListePayerParClient.as_view(), name='liste-payer-client'),
     path("lancer/", views.lancer_paiement, name="lancer_paiement"),
     path("callback/", views.paiement_callback, name="paiement_callback"),
-
-
-
+    path("paypal/<int:achat_id>/", views.creer_paiement_paypal),
+    path("valider/<int:paiement_id>/", views.valider_paiement_paypal),
+    path("annuler/<int:paiement_id>/", views.annuler_paiement_paypal),  # <-- ajouté
 ]

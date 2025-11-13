@@ -128,48 +128,123 @@ class ClientDeleteAPIView(APIView):
 #             return Response({"message": "Client mis Ã  jour avec succÃ¨s.", "client": serializer.data}, status=status.HTTP_200_OK)
 #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class ClientUpdateAPIView(APIView):
-    def put(self, request, pk):
-        try:
-            client = Client.objects.get(pk=pk)
+# class ClientUpdateAPIView(APIView):
+#     def put(self, request, pk):
+#         try:
+#             client = Client.objects.get(pk=pk)
 
-            # Récupération des champs
-            nom = request.data.get("Client_nom")
-            prenom = request.data.get("Client_prenom")
-            cin = request.data.get("Client_cin")
-            telephone1 = request.data.get("Client_telephone1")
-            telephone2 = request.data.get("Client_telephone2")
-            telephone3 = request.data.get("Client_telephone3")
-            telephone4 = request.data.get("Client_telephone4")
-            adresse = request.data.get("Client_adresse")
-            latitude = request.data.get("latitude")
-            longitude = request.data.get("longitude")
+#             # Récupération des champs
+#             nom = request.data.get("Client_nom")
+#             prenom = request.data.get("Client_prenom")
+#             cin = request.data.get("Client_cin")
+#             telephone1 = request.data.get("Client_telephone1")
+#             telephone2 = request.data.get("Client_telephone2")
+#             telephone3 = request.data.get("Client_telephone3")
+#             telephone4 = request.data.get("Client_telephone4")
+#             adresse = request.data.get("Client_adresse")
+#             latitude = request.data.get("latitude")
+#             longitude = request.data.get("longitude")
 
-            # Mise à jour des champs
-            if nom: client.Client_nom = nom
-            if prenom: client.Client_prenom = prenom
-            if cin: client.Client_cin = cin
-            if telephone1 is not None: client.Client_telephone1 = telephone1
-            if telephone2 is not None: client.Client_telephone2 = telephone2
-            if telephone3 is not None: client.Client_telephone3 = telephone3
-            if telephone4 is not None: client.Client_telephone4 = telephone4
-            if adresse: client.Client_adresse = adresse
+#             # Mise à jour des champs
+#             if nom: client.Client_nom = nom
+#             if prenom: client.Client_prenom = prenom
+#             if cin: client.Client_cin = cin
+#             if telephone1 is not None: client.Client_telephone1 = telephone1
+#             if telephone2 is not None: client.Client_telephone2 = telephone2
+#             if telephone3 is not None: client.Client_telephone3 = telephone3
+#             if telephone4 is not None: client.Client_telephone4 = telephone4
+#             if adresse: client.Client_adresse = adresse
 
-            if latitude: client.latitude = float(latitude)
-            if longitude: client.longitude = float(longitude)
+#             if latitude: client.latitude = float(latitude)
+#             if longitude: client.longitude = float(longitude)
 
-            # Mise à jour de la photo si présente
-            if "Client_photo" in request.FILES:
-                client.Client_photo = request.FILES["Client_photo"]
+#             # Mise à jour de la photo si présente
+#             if "Client_photo" in request.FILES:
+#                 client.Client_photo = request.FILES["Client_photo"]
 
-            client.save()
-            return Response({"message": "Client mis à jour"}, status=status.HTTP_200_OK)
+#             client.save()
+#             return Response({"message": "Client mis à jour"}, status=status.HTTP_200_OK)
 
-        except Client.DoesNotExist:
-            return Response({"error": "Client non trouvé"}, status=status.HTTP_404_NOT_FOUND)
+#         except Client.DoesNotExist:
+#             return Response({"error": "Client non trouvé"}, status=status.HTTP_404_NOT_FOUND)
 
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+#         except Exception as e:
+#             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.parsers import MultiPartParser, FormParser
+from supabase import create_client, Client as SupabaseClient
+from .models import Client
+from .serializers import ClientSerializer
+import uuid
+
+# --- Supabase config ---
+SUPABASE_URL = "https://rcbhcqyypiaatvcyolnw.supabase.co"
+SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjYmhjcXl5cGlhYXR2Y3lvbG53Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MTMyNDg3NiwiZXhwIjoyMDc2OTAwODc2fQ.gYH7mU0brZZ7bRF-1uo0QdLJcY45M9nYeBt0fzW2vlc"
+BUCKET = "media"
+
+supabase: SupabaseClient = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+
+
+# from rest_framework.views import APIView
+# from rest_framework.parsers import MultiPartParser, FormParser
+# from rest_framework.response import Response
+# from rest_framework import status
+
+# class ClientUpdateAPIView(APIView):
+#     parser_classes = [MultiPartParser, FormParser]
+
+#     def put(self, request, pk):
+#         return self.update_client(request, pk)
+
+#     def patch(self, request, pk):
+#         return self.update_client(request, pk)
+
+#     def update_client(self, request, pk):
+#         try:
+#             client = Client.objects.get(pk=pk)
+#         except Client.DoesNotExist:
+#             return Response({"error": "Client non trouvé"}, status=status.HTTP_404_NOT_FOUND)
+
+#         # --- mise à jour des champs ---
+#         data = request.data
+#         client.Client_nom = data.get("Client_nom", client.Client_nom)
+#         client.Client_prenom = data.get("Client_prenom", client.Client_prenom)
+#         client.Client_cin = data.get("Client_cin", client.Client_cin)
+#         client.Client_telephone1 = data.get("Client_telephone1", client.Client_telephone1)
+#         client.Client_telephone2 = data.get("Client_telephone2", client.Client_telephone2)
+#         client.Client_telephone3 = data.get("Client_telephone3", client.Client_telephone3)
+#         client.Client_telephone4 = data.get("Client_telephone4", client.Client_telephone4)
+#         client.Client_adresse = data.get("Client_adresse", client.Client_adresse)
+#         client.latitude = data.get("latitude", client.latitude)
+#         client.longitude = data.get("longitude", client.longitude)
+
+#         if "Client_photo" in request.FILES:
+#             client.Client_photo = request.FILES["Client_photo"]
+
+#         client.save()
+
+#         return Response({"message": "Client mis à jour avec succès"}, status=status.HTTP_200_OK)
+
+
+from rest_framework.decorators import api_view, parser_classes
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Client
+from .serializers import ClientSerializer
+
+@api_view(["POST", "PUT"])
+@parser_classes([MultiPartParser, FormParser])
+def update_client(request, id):
+    client = Client.objects.get(id=id)
+    serializer = ClientSerializer(client, data=request.data, context={"request": request})
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GeocodeAPIView(APIView):

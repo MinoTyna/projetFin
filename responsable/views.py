@@ -46,52 +46,132 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .models import Responsable
 from .serializers import ResponsableSerializer
 
+from rest_framework.parsers import MultiPartParser, FormParser
+from supabase import create_client
+import time
+
+# Supabase config
+SUPABASE_URL = "https://rcbhcqyypiaatvcyolnw.supabase.co"
+SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjYmhjcXl5cGlhYXR2Y3lvbG53Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MTMyNDg3NiwiZXhwIjoyMDc2OTAwODc2fQ.gYH7mU0brZZ7bRF-1uo0QdLJcY45M9nYeBt0fzW2vlc"
+BUCKET = "media"
+supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+
 class SyncResponsableAPIView(APIView):
-    permission_classes = [AllowAny]  # Permet d’accéder sans token (important pour signup)
+    parser_classes = [MultiPartParser, FormParser]
+    permission_classes = [AllowAny]
 
     def post(self, request):
         data = request.data
+
+        # Champs obligatoires
         email = data.get("Responsable_email")
+        password = data.get("password")
 
-        if not email:
-            return Response({"error": "Email requis"}, status=status.HTTP_400_BAD_REQUEST)
+        if not email or not password:
+            return Response({"error": "Email et mot de passe requis"}, status=status.HTTP_400_BAD_REQUEST)
 
-        update_fields = {
+        # Préparer les champs à créer
+        create_fields = {
             'Responsable_nom': data.get('Responsable_nom'),
             'Responsable_prenom': data.get('Responsable_prenom'),
             'Responsable_adresse': data.get('Responsable_adresse'),
             'Responsable_telephone': data.get('Responsable_telephone'),
             'Responsable_role': data.get('Responsable_role', 'vendeur'),
+            'Responsable_email': email,
+            'password': make_password(password)
         }
 
-        mot_de_passe = data.get("password")
-        if mot_de_passe:
-            update_fields["password"] = make_password(mot_de_passe)
-        else:
-            return Response({"error": "Mot de passe requis"}, status=status.HTTP_400_BAD_REQUEST)
+        # ⚡ Gestion du fichier image
+        uploaded_file = request.FILES.get('Responsable_photo')
+        if uploaded_file:
+            try:
+                # Nom unique pour Supabase
+                filename = f"{int(time.time())}_{uploaded_file.name}"
 
+                # Upload sur Supabase
+                supabase.storage.from_(BUCKET).upload(
+                    filename,
+                    uploaded_file.read(),
+                    {"content-type": uploaded_file.content_type}
+                )
+
+                # Stocker juste le nom du fichier dans la DB
+                create_fields['Responsable_photo'] = filename
+            except Exception as e:
+                return Response({"error": f"Upload Supabase échoué : {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        # Créer le responsable
         try:
-            responsable, created = Responsable.objects.update_or_create(
-                Responsable_email=email,
-                defaults=update_fields
-            )
+            responsable = Responsable.objects.create(**create_fields)
         except Exception as e:
-            return Response({"error": "Erreur serveur interne", "details": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": f"Erreur création responsable : {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+        # Générer token JWT
         refresh = RefreshToken.for_user(responsable)
-        refresh['email'] = responsable.Responsable_email
-        refresh['nom'] = responsable.Responsable_nom
-        refresh['role'] = responsable.Responsable_role
-        refresh['photo'] = responsable.Responsable_photo or ""
-
         access_token = str(refresh.access_token)
 
+        # Serializer
         serializer = ResponsableSerializer(responsable)
 
+        # URL publique Supabase
+        photo_url = f"https://rcbhcqyypiaatvcyolnw.supabase.co/storage/v1/object/public/media/{responsable.Responsable_photo}" if responsable.Responsable_photo else None
+
         return Response({
-            "user": serializer.data,
+            "user": {
+                **serializer.data,
+                "Responsable_photo_url": photo_url
+            },
             "token": access_token,
-        }, status=status.HTTP_200_OK)
+        }, status=status.HTTP_201_CREATED)
+
+# class SyncResponsableAPIView(APIView):
+#     parser_classes = [MultiPartParser, FormParser]
+
+#     permission_classes = [AllowAny]  # Permet d’accéder sans token (important pour signup)
+
+#     def post(self, request):
+#         data = request.data
+#         email = data.get("Responsable_email")
+
+#         if not email:
+#             return Response({"error": "Email requis"}, status=status.HTTP_400_BAD_REQUEST)
+
+#         update_fields = {
+#             'Responsable_nom': data.get('Responsable_nom'),
+#             'Responsable_prenom': data.get('Responsable_prenom'),
+#             'Responsable_adresse': data.get('Responsable_adresse'),
+#             'Responsable_telephone': data.get('Responsable_telephone'),
+#             'Responsable_role': data.get('Responsable_role', 'vendeur'),
+#         }
+
+#         mot_de_passe = data.get("password")
+#         if mot_de_passe:
+#             update_fields["password"] = make_password(mot_de_passe)
+#         else:
+#             return Response({"error": "Mot de passe requis"}, status=status.HTTP_400_BAD_REQUEST)
+
+#         try:
+#             responsable, created = Responsable.objects.update_or_create(
+#                 Responsable_email=email,
+#                 defaults=update_fields
+#             )
+#         except Exception as e:
+#             return Response({"error": "Erreur serveur interne", "details": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+#         refresh = RefreshToken.for_user(responsable)
+#         refresh['email'] = responsable.Responsable_email
+#         refresh['nom'] = responsable.Responsable_nom
+#         refresh['role'] = responsable.Responsable_role
+#         refresh['photo'] = responsable.Responsable_photo or ""
+
+#         access_token = str(refresh.access_token)
+
+#         serializer = ResponsableSerializer(responsable)
+
+#         return Response({
+#             "user": serializer.data,
+#             "token": access_token,
+#         }, status=status.HTTP_200_OK)
 
 
 

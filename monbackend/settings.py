@@ -12,13 +12,22 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 # import pymysql
 # pymysql.install_as_MySQLdb()
 SITE_URL = "http://127.0.0.1:8000"
-MVOLA_SANDBOX_TOKEN = "eyJ4NXQiOiJaREUzWW1RNFkyRmtZekprTmpNMk5EVmtZVE5oTkRSak16azFObVEyWXprelkyUTFaVFZqWVEiLCJraWQiOiJNVGRsTXpneFpqZGtNakk0WmpKbVlUZ3dNRFJpWWpNMU1tUmhOamxoTUdNME1XTmtPV05tT1RobU16VXlNMlUxTkRZNE5UWXhOMk01TW1SbU5XUTRPQV9SUzI1NiIsInR5cCI6ImF0K2p3dCIsImFsZyI6IlJTMjU2In0"
+MVOLA_SANDBOX_TOKEN = "eyJ4NXQiOiJaREUzWW1RNFkyRmtZekprTmpNMk5EVmtZVE5oTkRSak16azFObVEyWXprelkyUTFaVFZqWVEiLCJraWQiOiJNVGRsTXpneFpqZGtNakk0WmpKbVlUZ3dNRFJpWWpNMU1tUmhOamxoTUdNME1XTmtPV05tT1RobU16VXlNMlUxTkRZNE5UWXhOMk01TW1SbU5XUTRPQV9SUzI1NiIsInR5cCI6ImF0K2p3dCIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJjaHJpc3RpbmVyYXNvYW5hbWJpbmluYUBnbWFpbC5jb20iLCJhdXQiOiJBUFBMSUNBVElPTiIsImF1ZCI6Ik9LOVVrMjZlMmtRaGNSeDFhNllLN2FiWmJ4Y2EiLCJuYmYiOjE3NjIyNDA4ODAsImF6cCI6Ik9LOVVrMjZlMmtRaGNSeDFhNllLN2FiWmJ4Y2EiLCJzY29wZSI6ImRlZmF1bHQiLCJpc3MiOiJodHRwczpcL1wvZGV2ZWxvcGVyLm12b2xhLm1nXC9vYXV0aDJcL3Rva2VuIiwicmVhbG0iOnsic2lnbmluZ190ZW5hbnQiOiJjYXJib24uc3VwZXIifSwiZXhwIjoxNzYyMjQ0NDgwLCJpYXQiOjE3NjIyNDA4ODAsImp0aSI6IjgzZjA1Y2VlLTBmMmQtNGYzNi05N2M5LTc1NWYxYzBmOTg3NyJ9.MQsezGQCiYGRW4H8AwlWX5SjpjeTJa5-1j8uo0outAIQkZvESIGfsBzoFJgUIFjMjaspH3FaRIQ_kjX5TmjH9bOAnu2tBaeMzPP3YdkgJIwUu5KCeRMnUFFl5O8ytjB6Wu6gc1KF11Y2oVip23DXL6jP4wgvSW4a4pO5nM8094i2Ze-m13dzp7U3Sq_e0LFoGL7wK3PqEuxAyonzFOhGnE_9emQtkWtWOnuP0NUkBNhAo8A0-xbGr6bQc7ccZv25lyZPloB4cPEHTIOzJ4EhTB4GIW27CzvFbH5Fd3280m5q9M-oUkdOx3jQ4zcdSzcdwhc6nsIONe8xOYo4zdwbvw"
+MVOLA_CONSUMER_KEY = "OK9Uk26e2kQhcRx1a6YK7abZbxca"
+MVOLA_CONSUMER_SECRET = "GvhXrTyorPrwrKHRm8lHmCedFhUa"
 
 from pathlib import Path
 import os
 from dotenv import load_dotenv
 load_dotenv()
 
+import paypalrestsdk
+
+paypalrestsdk.configure({
+  "mode": "live", # Test
+  "client_id": "ASUfOszWNTev5zOMiZVfl2AolG9_kN0Z9K8pB2qdyZ2SsIFcBONRrQsKT8mOwgWH42w88z4xFihKY-P4",
+  "client_secret": "EC9Xh-7BA-nmpu1C0zGVH7I-0nI-7gOJEPkMl_2KVyH4NXznkKa8VFFg0BfpVdxiT1KF6UsWdpolXnst"
+})
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -167,7 +176,7 @@ DATABASES = {
         ssl_require=True
     )
 }
-DEBUG = False
+DEBUG = True
   # ⚠️ Mettre True uniquement en dev, False en prod
 
 

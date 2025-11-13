@@ -31,6 +31,7 @@ class Responsable(models.Model):
     Responsable_telephone = models.CharField(max_length=20, null=True, blank=True, default=None)
     Responsable_role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='vendeur')
     Responsable_photo = models.ImageField(upload_to='responsables/photos/', blank=True, null=True)
+    
 
     # 🔒 Champ mot de passe sécurisé
     password = models.CharField(max_length=128, null=True, blank=True)
@@ -39,3 +40,7 @@ class Responsable(models.Model):
 
     def __str__(self):
         return f"{self.Responsable_prenom or ''} {self.Responsable_nom or ''} - {self.Responsable_role}"
+    def get_photo_url(self):
+        if self.Responsable_photo:
+            return f"https://rcbhcqyypiaatvcyolnw.supabase.co/storage/v1/object/public/media/{self.Responsable_photo}"
+        return None

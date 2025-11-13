@@ -58,15 +58,34 @@ class ProduitDeleteAPIView(APIView):
         produit.delete()
         return Response({"message": "Produit supprimÃ© avec succÃ¨s."}, status=status.HTTP_200_OK)
 
+
+from supabase import create_client
+import time
+
+# Supabase config
+SUPABASE_URL = "https://rcbhcqyypiaatvcyolnw.supabase.co"
+SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjYmhjcXl5cGlhYXR2Y3lvbG53Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MTMyNDg3NiwiZXhwIjoyMDc2OTAwODc2fQ.gYH7mU0brZZ7bRF-1uo0QdLJcY45M9nYeBt0fzW2vlc"
+BUCKET = "media"
+supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+
 class ProduitUpdateAPIView(APIView):
-    def put(self, request, produit_id):
+    parser_classes = [MultiPartParser, FormParser]
+
+    def patch(self, request, produit_id):  # PATCH au lieu de PUT
         try:
             produit = Produit.objects.get(id=produit_id)
         except Produit.DoesNotExist:
-            return Response({"error": "Produit introuvable."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Produit introuvable."}, status=404)
 
-        serializer = ProduitSerializer(produit, data=request.data, partial=True)  # partial=True pour update partiel
+        serializer = ProduitSerializer(
+            produit,
+            data=request.data,
+            partial=True,
+            context={'request': request}
+        )
+
         if serializer.is_valid():
             serializer.save()
-            return Response({"message": "Produit mis Ã  jour avec succÃ¨s.", "produit": serializer.data}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "Produit mis à jour avec succès", "produit": serializer.data}, status=200)
+
+        return Response(serializer.errors, status=400)

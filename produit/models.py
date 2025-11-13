@@ -18,7 +18,8 @@ class Produit(models.Model):
     Produit_prix = models.IntegerField()
     
     # ⚡ Supabase Storage → stocker le nom du fichier
-    Produit_photo = models.ImageField(upload_to='produits/photos/', blank=True, null=True)
+    Produit_photo = models.ImageField(upload_to='', blank=True, null=True)
+
 
     
     date = models.DateTimeField(auto_now_add=True)
